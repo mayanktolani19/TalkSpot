@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "735042202046",
+    "firebase_url": "https://talkspot-cfd80.firebaseio.com",
+    "project_id": "talkspot-cfd80",
+    "storage_bucket": "talkspot-cfd80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735042202046:android:2ac75ce3b2cce0d3fdf1ef",
+        "android_client_info": {
+          "package_name": "com.mayanktolani19.talk_spot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735042202046-k3tj6tj7tqjabucpfebsd835u7kf9ean.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvefUDEiZoqnem0pf6IsULVIqEtEoUkzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735042202046-k3tj6tj7tqjabucpfebsd835u7kf9ean.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
