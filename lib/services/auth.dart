@@ -3,6 +3,7 @@ import 'package:talk_spot/modal/user.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   User _userFromFirebaseUser(FirebaseUser user) {
     return user != null ? User(user.uid) : null;
   }
@@ -34,6 +35,7 @@ class AuthMethods {
       return await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       print(e);
+      return e;
     }
   }
 

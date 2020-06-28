@@ -10,8 +10,9 @@ Widget appBarMain(BuildContext context) {
   );
 }
 
-InputDecoration textFieldInputDecoration(String hintText) {
+InputDecoration textFieldInputDecoration(String hintText, Icon icon) {
   return InputDecoration(
+    icon: icon,
     enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
           color: Colors.blue,

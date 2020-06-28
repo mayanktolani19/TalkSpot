@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/widgets/widget.dart';
+import 'dart:async';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
-  ConversationScreen(this.chatRoomId);
+  final String userName;
+  ConversationScreen(this.chatRoomId, this.userName);
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
 }
@@ -14,7 +16,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   TextEditingController messageTextController = new TextEditingController();
   Stream chatMessages;
-  final listViewScrollController = ScrollController();
+  ScrollController scrollController = new ScrollController();
 
   @override
   void initState() {
@@ -30,14 +32,23 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return StreamBuilder(
         stream: chatMessages,
         builder: (context, snapshot) {
+          Timer(
+            Duration(milliseconds: 150),
+            () => scrollController
+                .jumpTo(scrollController.position.maxScrollExtent),
+          );
           return snapshot.hasData
               ? ListView.builder(
+                  shrinkWrap: true,
                   itemCount: snapshot.data.documents.length,
+                  controller: scrollController,
                   itemBuilder: (context, index) {
                     return MessageTile(
                         snapshot.data.documents[index].data["message"],
                         snapshot.data.documents[index].data["sentBy"] ==
-                            Constants.myName);
+                            Constants.myName,
+                        index,
+                        snapshot.data.documents.length);
                   })
               : Container();
         });
@@ -58,7 +69,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarMain(context),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          widget.userName,
+          style: TextStyle(fontSize: 22),
+        ),
+        backgroundColor: Color.fromRGBO(13, 35, 197, 80),
+      ),
       body: Container(
         child: Stack(
           children: <Widget>[
@@ -66,19 +84,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Container(
               alignment: Alignment.bottomCenter,
               child: Container(
-                color: Color(0x54FFFFFF),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    color: Colors.black12),
+                //color: Color(0x54FFFFFF),
                 //margin: EdgeInsets.symmetric(vertical: 8),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                        child: TextField(
-                      controller: messageTextController,
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Type a message....",
-                          hintStyle: TextStyle(color: Colors.white54)),
+                        child: Container(
+                      child: TextField(
+                        controller: messageTextController,
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Type a message....",
+                            hintStyle: TextStyle(color: Colors.white54)),
+                      ),
                     )),
                     GestureDetector(
                       onTap: () {
@@ -108,7 +131,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
 class MessageTile extends StatelessWidget {
   final String message;
   final bool isSendByMe;
-  MessageTile(this.message, this.isSendByMe);
+  final int index;
+  final int length;
+  MessageTile(this.message, this.isSendByMe, this.index, this.length);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -117,10 +142,13 @@ class MessageTile extends StatelessWidget {
           bottom: 8,
           left: isSendByMe ? 0 : 4,
           right: isSendByMe ? 4 : 0),
-      margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+      margin: EdgeInsets.symmetric(vertical: 3, horizontal: 3),
       width: MediaQuery.of(context).size.width / 1.5,
       alignment: isSendByMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
+          margin: index == length - 1
+              ? EdgeInsets.only(bottom: 80)
+              : EdgeInsets.all(0),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           decoration: BoxDecoration(
               borderRadius: isSendByMe

@@ -97,7 +97,12 @@ class _SignUpState extends State<SignUp> {
                             child: TextFormField(
                               controller: usernameTextEditingController,
                               style: simpleTextFieldStyle(),
-                              decoration: textFieldInputDecoration('User Name'),
+                              decoration: textFieldInputDecoration(
+                                  'User Name',
+                                  Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.white,
+                                  )),
                               validator: (val) {
                                 return val.isEmpty
                                     ? "Please provide a UserName."
@@ -112,7 +117,8 @@ class _SignUpState extends State<SignUp> {
                             child: TextFormField(
                               controller: emailTextEditingController,
                               style: simpleTextFieldStyle(),
-                              decoration: textFieldInputDecoration('Email'),
+                              decoration: textFieldInputDecoration('Email',
+                                  Icon(Icons.email, color: Colors.white)),
                               validator: (val) {
                                 return RegExp(
                                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -128,7 +134,10 @@ class _SignUpState extends State<SignUp> {
                               obscureText: true,
                               controller: passwordTextEditingController,
                               style: simpleTextFieldStyle(),
-                              decoration: textFieldInputDecoration('Password'),
+                              decoration: textFieldInputDecoration(
+                                  'Password',
+                                  Icon(Icons.lock_outline,
+                                      color: Colors.white)),
                               validator: (val) {
                                 return val.isEmpty
                                     ? "Please provide a Password."

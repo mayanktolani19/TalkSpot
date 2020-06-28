@@ -32,6 +32,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   getUserInfo() async {
     Constants.myName = await HelperFunctions().getUserName();
+    print(Constants.myName);
   }
 
   logoutUser() async {
@@ -50,13 +51,17 @@ class _ChatRoomState extends State<ChatRoom> {
               ? ListView.builder(
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index) {
-                    print(snapshot.data.documents[index].data["chatRoomId"]);
-                    return ChatRoomTile(
-                        snapshot.data.documents[index].data["chatRoomId"]
-                            .toString()
-                            .replaceAll("_", "")
-                            .replaceAll(Constants.myName, ""),
-                        snapshot.data.documents[index].data["chatRoomId"]);
+                    if (snapshot.data.documents[index].data["chatRoomId"]
+                        .toString()
+                        .contains(Constants.myName)) {
+                      return ChatRoomTile(
+                          snapshot.data.documents[index].data["chatRoomId"]
+                              .toString()
+                              .replaceAll("_", "")
+                              .replaceAll(Constants.myName, ""),
+                          snapshot.data.documents[index].data["chatRoomId"]);
+                    }
+                    return Container();
                   })
               : Container();
         });
@@ -65,6 +70,7 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.black,
         body: chatRoomList(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.search),
@@ -74,10 +80,14 @@ class _ChatRoomState extends State<ChatRoom> {
           },
         ),
         appBar: AppBar(
-          title: Text('Talk Spot'),
+          title: Text(
+            'TalkSpot - ' + Constants.myName,
+            style: TextStyle(fontSize: 22),
+          ),
+          backgroundColor: Color.fromRGBO(13, 35, 197, 80),
           actions: <Widget>[
             GestureDetector(
-              onTap: () async {
+              onTap: () {
                 showDialog(
                   context: context,
                   child: AlertDialog(
@@ -128,12 +138,13 @@ class ChatRoomTile extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ConversationScreen(chatRoomId)));
+                builder: (context) =>
+                    ConversationScreen(chatRoomId, userName)));
       },
       child: Container(
           //margin: EdgeInsets.only(bottom: 8),
           color: Colors.black54,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 18),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 22),
           child: Row(
             children: <Widget>[
               Container(
@@ -143,12 +154,15 @@ class ChatRoomTile extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(100)),
-                child: Text(userName.substring(0, 1)),
+                child: Text(
+                  userName.substring(0, 1),
+                  style: TextStyle(fontSize: 19),
+                ),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 10),
               Text(
                 userName,
-                style: simpleTextFieldStyle(),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ],
           )),

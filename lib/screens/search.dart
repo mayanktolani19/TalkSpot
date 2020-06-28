@@ -17,6 +17,8 @@ class _SearchScreenState extends State<SearchScreen> {
   QuerySnapshot searchSnapshot;
   TextEditingController searchTextEditingController =
       new TextEditingController();
+  bool mine = false;
+  bool found = false;
 
   @override
   void initState() {
@@ -24,19 +26,28 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
-  initiateSearch() {
-    databaseMethods
-        .getUserByUsername(searchTextEditingController.text)
-        .then((val) {
-      setState(() {
-        searchSnapshot = val;
-      });
-    });
-  }
-
   getUserInfo() async {
     Constants.myName = await HelperFunctions().getUserName();
     setState(() {});
+  }
+
+  initiateSearch() async {
+    await databaseMethods
+        .getUserByUsername(searchTextEditingController.text)
+        .then((val) {
+      try {
+        print(searchSnapshot.documents[0]);
+        setState(() {
+          found = true;
+        });
+      } catch (e) {
+        print(e);
+        setState(() {
+          found = false;
+        });
+      }
+      searchSnapshot = val;
+    });
   }
 
   getChatRoomId(String a, String b) {
@@ -61,8 +72,11 @@ class _SearchScreenState extends State<SearchScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ConversationScreen(chatRoomId)));
+              builder: (context) => ConversationScreen(chatRoomId, userName)));
     } else {
+      setState(() {
+        mine = true;
+      });
       print("You cannot send message to yourself");
     }
   }
@@ -117,44 +131,93 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarMain(context),
-      body: Container(
-          child: Column(
-        children: <Widget>[
-          Container(
-            color: Color(0x54FFFFFF),
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    child: TextField(
-                  controller: searchTextEditingController,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Search UserName....",
-                      hintStyle: TextStyle(color: Colors.white54)),
-                )),
-                GestureDetector(
-                  onTap: () {
-                    initiateSearch();
-                  },
-                  child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          color: Colors.blueGrey),
-                      child: Icon(
-                        Icons.search,
-                        size: 25,
-                      )),
-                )
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              color: Color(0x54FFFFFF),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: TextField(
+                    controller: searchTextEditingController,
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Search UserName....",
+                        hintStyle: TextStyle(color: Colors.white54)),
+                  )),
+                  GestureDetector(
+                    onTap: () {
+                      initiateSearch();
+                    },
+                    child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: Colors.blueGrey),
+                        child: Icon(
+                          Icons.search,
+                          size: 25,
+                        )),
+                  )
+                ],
+              ),
             ),
-          ),
-          searchList(),
-        ],
-      )),
+            searchList(),
+            !found
+                ? Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20),
+                        child: Image.asset(
+                          'assets/images/searchImg3.png',
+                          color: Colors.blue,
+                        ),
+                      ),
+                      searchTextEditingController.text == null
+                          ? Text(
+                              'Search for a UserName.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.blueAccent,
+                                fontSize: 32,
+                              ),
+                            )
+                          : !found
+                              ? Text(
+                                  'Search for a UserName.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontSize: 32,
+                                  ),
+                                )
+                              : Container(),
+                    ],
+                  )
+                : Column(children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 20),
+                      child: Image.asset(
+                        'assets/images/searchImg3.png',
+                        color: Colors.blue,
+                      ),
+                    ),
+                    Text(
+                      'Not able to found the SserName you were looking for.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 32,
+                      ),
+                    )
+                  ])
+          ],
+        ),
+      ),
     );
   }
 }

@@ -2,17 +2,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
   getUserByUsername(String username) async {
-    return await Firestore.instance
-        .collection("users")
-        .where("name", isEqualTo: username)
-        .getDocuments();
+    try {
+      return await Firestore.instance
+          .collection("users")
+          .where("name", isEqualTo: username)
+          .getDocuments();
+    } catch (e) {
+      return e;
+    }
   }
 
   getUserByUserEmail(String userEmail) async {
-    return await Firestore.instance
-        .collection("users")
-        .where("email", isEqualTo: userEmail)
-        .getDocuments();
+    try {
+      return await Firestore.instance
+          .collection("users")
+          .where("email", isEqualTo: userEmail)
+          .getDocuments();
+    } catch (e) {
+      print(e);
+      return (e);
+    }
   }
 
   uploadUserInfo(userMap) async {

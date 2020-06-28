@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:talk_spot/helper/helperfunctions.dart';
+import 'package:talk_spot/screens/forgot_password.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
@@ -104,21 +105,19 @@ class _SignInState extends State<SignIn> {
                           children: <Widget>[
                             SizedBox(height: 30),
                             Container(
-//                        decoration: BoxDecoration(
-//                          borderRadius: BorderRadius.all(Radius.circular(35)),
-//                        ),
                               margin: EdgeInsets.symmetric(vertical: 8),
                               child: TextFormField(
                                 validator: (val) {
-                                  return val.isEmpty
-                                      ? "Please provide a UserName."
-                                      : val.length < 3
-                                          ? "UserName is too short."
-                                          : null;
+                                  return RegExp(
+                                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                          .hasMatch(val)
+                                      ? null
+                                      : "Please provide a valid email.";
                                 },
                                 style: simpleTextFieldStyle(),
                                 controller: emailTextEditingController,
-                                decoration: textFieldInputDecoration('Email'),
+                                decoration: textFieldInputDecoration('Email',
+                                    Icon(Icons.email, color: Colors.white)),
                               ),
                             ),
                             SizedBox(height: 15),
@@ -133,19 +132,36 @@ class _SignInState extends State<SignIn> {
                               },
                               controller: passwordTextEditingController,
                               style: simpleTextFieldStyle(),
-                              decoration: textFieldInputDecoration('Password'),
+                              decoration: textFieldInputDecoration(
+                                  'Password',
+                                  Icon(Icons.lock_outline,
+                                      color: Colors.white)),
                             ),
                           ],
                         ),
                       ),
                       SizedBox(height: 10),
-                      Container(
-                        alignment: Alignment.centerRight,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPassword()));
+                        },
                         child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Text("Forgot Password?",
-                              style: simpleTextFieldStyle()),
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Text(
+                              "Forgot Password?",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.white,
+                                  fontSize: 16),
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -173,17 +189,47 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                       SizedBox(height: 15),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text(
-                          "Sign In with Google",
-                          style: TextStyle(fontSize: 17, color: Colors.black),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            child: AlertDialog(
+                              backgroundColor: Colors.blue[900],
+                              title: Text(
+                                'This option will be enabled soon in further updates.',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              ),
+                              content: Text(
+                                'You may create an account for now.',
+                                style: simpleTextFieldStyle(),
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text(
+                                    'Ok',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            "Sign In with Google",
+                            style: TextStyle(fontSize: 17, color: Colors.black),
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white),
                         ),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white),
                       ),
                       SizedBox(height: 16),
                       Row(
@@ -216,7 +262,7 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             )
-          : Container(child: CircularProgressIndicator()),
+          : Center(child: Container(child: CircularProgressIndicator())),
     );
   }
 }
