@@ -24,8 +24,18 @@ class DatabaseMethods {
     }
   }
 
-  uploadUserInfo(userMap) async {
-    await Firestore.instance.collection("users").add(userMap);
+  uploadUserInfo(userMap, google) async {
+    bool save = true;
+    if (google) {
+      var a = await Firestore.instance.collection("users").getDocuments();
+      for (int i = 0; i < a.documents.length; i++) {
+        if (a.documents[i]["email"] == userMap["email"]) {
+          save = false;
+          break;
+        }
+      }
+    }
+    if (save) await Firestore.instance.collection("users").add(userMap);
   }
 
   createChatRoom(String chatRoomId, chatRoomMap) {
@@ -50,7 +60,7 @@ class DatabaseMethods {
   }
 
   getConversationMessages(String chatRoomId) async {
-    return await Firestore.instance
+    return Firestore.instance
         .collection("ChatRoom")
         .document(chatRoomId)
         .collection("chats")
@@ -59,7 +69,7 @@ class DatabaseMethods {
   }
 
   getChatRooms(String userName) async {
-    return await Firestore.instance
+    return Firestore.instance
         .collection("ChatRoom")
         .where("users", arrayContains: userName)
         .snapshots();

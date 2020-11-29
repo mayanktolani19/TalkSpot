@@ -8,6 +8,7 @@ import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/conversation_screen.dart';
 import 'package:talk_spot/screens/search.dart';
 import 'package:talk_spot/widgets/widget.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ChatRoom extends StatefulWidget {
   @override
@@ -39,6 +40,9 @@ class _ChatRoomState extends State<ChatRoom> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs?.clear();
     authMethods.signOut();
+    GoogleSignIn googleSignIn = new GoogleSignIn();
+    bool a = await googleSignIn.isSignedIn();
+    if (a) await googleSignIn.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => Authenticate()));
   }
@@ -81,7 +85,7 @@ class _ChatRoomState extends State<ChatRoom> {
         ),
         appBar: AppBar(
           title: Text(
-            'TalkSpot - ' + Constants.myName,
+            'TalkSpot - ' + Constants.myName != null ? Constants.myName : ' ',
             style: TextStyle(fontSize: 22),
           ),
           backgroundColor: Color.fromRGBO(13, 35, 197, 80),

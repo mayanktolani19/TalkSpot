@@ -190,33 +190,28 @@ class _SignInState extends State<SignIn> {
                       ),
                       SizedBox(height: 15),
                       GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            child: AlertDialog(
-                              backgroundColor: Colors.blue[900],
-                              title: Text(
-                                'This option will be enabled soon in further updates.',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              ),
-                              content: Text(
-                                'You may create an account for now.',
-                                style: simpleTextFieldStyle(),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(false);
-                                  },
-                                  child: Text(
-                                    'Ok',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                        onTap: () async {
+                          String em = await authMethods.signInWithGoogle();
+                          print(em);
+                          if (em != null) {
+                            helperFunctions.saveUserEmail(em);
+                            setState(() {
+                              isLoading = true;
+                            });
+                            String name = await authMethods.getUserName();
+                            await helperFunctions.saveUserName(name);
+                            await helperFunctions.saveLoggedIn(true);
+                            Map<String, dynamic> userMap = {
+                              "name": name,
+                              "email": em
+                            };
+                            await databaseMethods.uploadUserInfo(userMap, true);
+                            if (em != null && name != null)
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatRoom()));
+                          }
                         },
                         child: Container(
                           alignment: Alignment.center,

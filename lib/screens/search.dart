@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/services/database.dart';
-import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/screens/conversation_screen.dart';
 import 'package:talk_spot/widgets/widget.dart';
 

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "735042202046-deg0je7r2lrg6grduks66nfaa5q67bb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mayanktolani19.talk_spot",
+            "certificate_hash": "3589b84040ccae7d5f36e054addc065829c63882"
+          }
+        },
+        {
           "client_id": "735042202046-k3tj6tj7tqjabucpfebsd835u7kf9ean.apps.googleusercontent.com",
           "client_type": 3
         }

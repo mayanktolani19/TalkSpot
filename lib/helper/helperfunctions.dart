@@ -32,6 +32,6 @@ class HelperFunctions {
 
   Future getUserEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.getString(userEmailKey);
+    return prefs.getString(userEmailKey);
   }
 }

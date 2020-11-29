@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/services/database.dart';
-import 'package:talk_spot/widgets/widget.dart';
 import 'dart:async';
 
 class ConversationScreen extends StatefulWidget {
