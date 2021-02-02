@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:talk_spot/helper/constants.dart';
-import 'package:talk_spot/helper/helperfunctions.dart';
+import 'package:talk_spot/screens/signin.dart';
 import 'package:talk_spot/services/auth.dart';
-import 'package:talk_spot/helper/authenticate.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/conversation_screen.dart';
 import 'package:talk_spot/screens/search.dart';
+import 'package:talk_spot/services/user_provider.dart';
 import 'package:talk_spot/widgets/widget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -22,18 +22,14 @@ class _ChatRoomState extends State<ChatRoom> {
 
   @override
   void initState() {
-    getUserInfo();
-    databaseMethods.getChatRooms(Constants.myName).then((val) {
+    databaseMethods
+        .getChatRooms(Provider.of<UserProvider>(context, listen: false).name)
+        .then((val) {
       setState(() {
         chatRoomsStream = val;
       });
     });
     super.initState();
-  }
-
-  getUserInfo() async {
-    Constants.myName = await HelperFunctions().getUserName();
-    print(Constants.myName);
   }
 
   logoutUser() async {
@@ -44,7 +40,7 @@ class _ChatRoomState extends State<ChatRoom> {
     bool a = await googleSignIn.isSignedIn();
     if (a) await googleSignIn.signOut();
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Authenticate()));
+        context, MaterialPageRoute(builder: (context) => SignIn()));
   }
 
   Widget chatRoomList() {
@@ -53,17 +49,23 @@ class _ChatRoomState extends State<ChatRoom> {
         builder: (context, snapshot) {
           return snapshot.hasData
               ? ListView.builder(
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
-                    if (snapshot.data.documents[index].data["chatRoomId"]
+                    if (snapshot.data.docs[index]["chatRoomId"]
                         .toString()
-                        .contains(Constants.myName)) {
+                        .contains(
+                            Provider.of<UserProvider>(context, listen: false)
+                                .name)) {
                       return ChatRoomTile(
-                          snapshot.data.documents[index].data["chatRoomId"]
+                          snapshot.data.docs[index]["chatRoomId"]
                               .toString()
                               .replaceAll("_", "")
-                              .replaceAll(Constants.myName, ""),
-                          snapshot.data.documents[index].data["chatRoomId"]);
+                              .replaceAll(
+                                  Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .name,
+                                  ""),
+                          snapshot.data.docs[index]["chatRoomId"]);
                     }
                     return Container();
                   })
@@ -85,7 +87,12 @@ class _ChatRoomState extends State<ChatRoom> {
         ),
         appBar: AppBar(
           title: Text(
-            'TalkSpot - ' + Constants.myName != null ? Constants.myName : ' ',
+            'TalkSpot - ' +
+                        Provider.of<UserProvider>(context, listen: false)
+                            .name !=
+                    null
+                ? Provider.of<UserProvider>(context, listen: false).name
+                : ' ',
             style: TextStyle(fontSize: 22),
           ),
           backgroundColor: Color.fromRGBO(13, 35, 197, 80),

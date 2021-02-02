@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/conversation_screen.dart';
+import 'package:talk_spot/services/user_provider.dart';
 import 'package:talk_spot/widgets/widget.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -21,13 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
-    getUserInfo();
     super.initState();
-  }
-
-  getUserInfo() async {
-    Constants.myName = await HelperFunctions().getUserName();
-    setState(() {});
   }
 
   initiateSearch() async {
@@ -35,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
         .getUserByUsername(searchTextEditingController.text)
         .then((val) {
       try {
-        print(searchSnapshot.documents[0]);
+        print(searchSnapshot.docs[0]);
         setState(() {
           found = true;
         });
@@ -58,11 +54,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   createChatRoom(String userName) {
-    if (Constants.myName != userName) {
-      print(Constants.myName);
+    if (Provider.of<UserProvider>(context, listen: false).name != userName) {
       print(userName);
-      List<String> users = [Constants.myName, userName];
-      String chatRoomId = getChatRoomId(Constants.myName, userName);
+      List<String> users = [
+        Provider.of<UserProvider>(context, listen: false).name,
+        userName
+      ];
+      String chatRoomId = getChatRoomId(
+          Provider.of<UserProvider>(context, listen: false).name, userName);
       Map<String, dynamic> chatRoomMap = {
         "users": users,
         "chatRoomId": chatRoomId,
@@ -84,10 +83,10 @@ class _SearchScreenState extends State<SearchScreen> {
     return searchSnapshot != null
         ? ListView.builder(
             shrinkWrap: true,
-            itemCount: searchSnapshot.documents.length,
+            itemCount: searchSnapshot.docs.length,
             itemBuilder: (context, index) {
-              return searchTile(searchSnapshot.documents[index].data["name"],
-                  searchSnapshot.documents[index].data["email"]);
+              return searchTile(searchSnapshot.docs[index]["name"],
+                  searchSnapshot.docs[index]["email"]);
             })
         : Container();
   }

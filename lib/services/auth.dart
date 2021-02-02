@@ -6,10 +6,6 @@ class AuthMethods {
   GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(user.uid) : null;
-  }
-
   signInWithGoogle() async {
     try {
       await googleSignIn.signIn();
@@ -29,10 +25,7 @@ class AuthMethods {
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      FirebaseUser firebaseUser = result.user;
-      return _userFromFirebaseUser(firebaseUser);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
       print(e);
     }
@@ -40,10 +33,8 @@ class AuthMethods {
 
   Future signUpWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser firebaseUser = result.user;
-      return _userFromFirebaseUser(firebaseUser);
     } catch (e) {
       print(e);
     }

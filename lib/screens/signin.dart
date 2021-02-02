@@ -1,23 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/screens/forgot_password.dart';
+import 'package:talk_spot/screens/signup.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
+import 'package:talk_spot/services/user_provider.dart';
 import 'package:talk_spot/widgets/widget.dart';
 import 'dart:ui';
 
 class SignIn extends StatefulWidget {
-  final Function toggle;
-  SignIn(this.toggle);
-
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
-  HelperFunctions helperFunctions = new HelperFunctions();
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   final formKey = GlobalKey<FormState>();
@@ -29,7 +28,8 @@ class _SignInState extends State<SignIn> {
   QuerySnapshot snapshotUserInfo;
   signIn() {
     if (formKey.currentState.validate()) {
-      helperFunctions.saveUserEmail(emailTextEditingController.text);
+      Provider.of<UserProvider>(context, listen: false)
+          .updateEmail(emailTextEditingController.text);
       setState(() {
         isLoading = true;
       });
@@ -37,23 +37,20 @@ class _SignInState extends State<SignIn> {
           .getUserByUserEmail(emailTextEditingController.text)
           .then((val) {
         snapshotUserInfo = val;
-        helperFunctions
-            .saveUserName(snapshotUserInfo.documents[0].data["name"]);
+        Provider.of<UserProvider>(context, listen: false)
+            .updateName(snapshotUserInfo.docs[0]["name"]);
       });
       authMethods
           .signInWithEmailAndPassword(emailTextEditingController.text,
               passwordTextEditingController.text)
           .then((val) {
         if (val != null) {
-          helperFunctions.saveLoggedIn(true);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => ChatRoom()));
         }
       });
     }
   }
-
-  //helperFunctions.saveUserName(usernameTextEditingController.text);
 
   @override
   Widget build(BuildContext context) {
@@ -194,13 +191,14 @@ class _SignInState extends State<SignIn> {
                           String em = await authMethods.signInWithGoogle();
                           print(em);
                           if (em != null) {
-                            helperFunctions.saveUserEmail(em);
+                            Provider.of<UserProvider>(context, listen: false)
+                                .updateEmail(em);
                             setState(() {
                               isLoading = true;
                             });
                             String name = await authMethods.getUserName();
-                            await helperFunctions.saveUserName(name);
-                            await helperFunctions.saveLoggedIn(true);
+                            Provider.of<UserProvider>(context, listen: false)
+                                .updateName(name);
                             Map<String, dynamic> userMap = {
                               "name": name,
                               "email": em
@@ -236,7 +234,10 @@ class _SignInState extends State<SignIn> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              widget.toggle();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUp()));
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8),

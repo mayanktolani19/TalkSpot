@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/services/database.dart';
 import 'dart:async';
+
+import 'package:talk_spot/services/user_provider.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -39,15 +42,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
           return snapshot.hasData
               ? ListView.builder(
                   shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   controller: scrollController,
                   itemBuilder: (context, index) {
                     return MessageTile(
-                        snapshot.data.documents[index].data["message"],
-                        snapshot.data.documents[index].data["sentBy"] ==
-                            Constants.myName,
+                        snapshot.data.docs[index]["message"],
+                        snapshot.data.docs[index]["sentBy"] ==
+                            Provider.of<UserProvider>(context, listen: false)
+                                .name,
                         index,
-                        snapshot.data.documents.length);
+                        snapshot.data.docs.length);
                   })
               : Container();
         });
@@ -57,7 +61,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (messageTextController.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         "message": messageTextController.text,
-        "sentBy": Constants.myName,
+        "sentBy": Provider.of<UserProvider>(context, listen: false).name,
         "time": DateTime.now().millisecondsSinceEpoch
       };
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap);

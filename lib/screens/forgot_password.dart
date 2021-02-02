@@ -26,7 +26,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           .then((val) {
         snapshotUserInfo = val;
         try {
-          print(snapshotUserInfo.documents[0].data["name"]);
+          print(snapshotUserInfo.docs[0]["name"]);
           setState(() {
             userFound = true;
           });

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:talk_spot/helper/helperfunctions.dart';
+import 'package:talk_spot/screens/signin.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
+import 'package:talk_spot/services/user_provider.dart';
 import 'package:talk_spot/widgets/widget.dart';
 
 class SignUp extends StatefulWidget {
-  final Function toggle;
-  SignUp(this.toggle);
-
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -16,7 +16,6 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
-  HelperFunctions helperFunctions = new HelperFunctions();
   bool isLoading = false;
   final formKey = GlobalKey<FormState>();
   TextEditingController usernameTextEditingController =
@@ -32,8 +31,11 @@ class _SignUpState extends State<SignUp> {
         "name": usernameTextEditingController.text,
         "email": emailTextEditingController.text
       };
-      helperFunctions.saveUserEmail(emailTextEditingController.text);
-      helperFunctions.saveUserName(usernameTextEditingController.text);
+
+      Provider.of<UserProvider>(context, listen: false)
+          .updateEmail(emailTextEditingController.text);
+      Provider.of<UserProvider>(context, listen: false)
+          .updateName(usernameTextEditingController.text);
       setState(() {
         isLoading = true;
       });
@@ -42,8 +44,6 @@ class _SignUpState extends State<SignUp> {
               passwordTextEditingController.text)
           .then((val) {
         databaseMethods.uploadUserInfo(userMap, false);
-        helperFunctions.saveLoggedIn(true);
-        print(val);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => ChatRoom()));
       });
@@ -175,18 +175,6 @@ class _SignUpState extends State<SignUp> {
                                 ])),
                       ),
                     ),
-//            SizedBox(height: 15),
-//            Container(
-//              alignment: Alignment.center,
-//              width: MediaQuery.of(context).size.width,
-//              padding: EdgeInsets.symmetric(vertical: 20),
-//              child: Text(
-//                "Sign In with Google",
-//                style: TextStyle(fontSize: 17, color: Colors.black),
-//              ),
-//              decoration: BoxDecoration(
-//                  borderRadius: BorderRadius.circular(30), color: Colors.white),
-//            ),
                     SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +185,10 @@ class _SignUpState extends State<SignUp> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            widget.toggle();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignIn()));
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 8),

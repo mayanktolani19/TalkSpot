@@ -1,43 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:talk_spot/helper/authenticate.dart';
-import 'package:talk_spot/helper/helperfunctions.dart';
-import 'package:talk_spot/screens/chat_rooms_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:talk_spot/screens/signin.dart';
+import 'package:talk_spot/screens/splash_screen.dart';
+import 'package:talk_spot/services/routing.dart';
+import 'package:talk_spot/services/user_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
-  @override
-  _MyAppState createState() => _MyAppState();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-  @override
-  void initState() {
-    getLoggedInStatus();
-    super.initState();
-  }
-
-  getLoggedInStatus() async {
-    await HelperFunctions().getLoggedIn().then((val) {
-      setState(() {
-        isLoggedIn = false;
-        if (val != null) isLoggedIn = val;
-      });
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primaryColor: Color(0xff145C9E),
-          scaffoldBackgroundColor: Color(0xff1F1F1F),
-          primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProvider>(
+            create: (context) => UserProvider()),
+      ],
+      child: KeyboardDismissOnTap(
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primaryColor: Color(0xff145C9E),
+            scaffoldBackgroundColor: Color(0xff1F1F1F),
+            primarySwatch: Colors.blue,
+          ),
+          home: SplashScreen(),
+          initialRoute: '/',
+          onGenerateRoute: RouteGenerator.generateRoute,
+          // home: isLoggedIn ? ChatRoom() : Authenticate(),
         ),
-        home: isLoggedIn ? ChatRoom() : Authenticate());
+      ),
+    );
   }
 }
