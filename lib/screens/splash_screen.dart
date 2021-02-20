@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:talk_spot/helper/authenticate.dart';
+import 'package:provider/provider.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
-import 'package:talk_spot/screens/signin.dart';
+import 'package:talk_spot/services/database.dart';
+import 'package:talk_spot/services/user_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   // This widget is the root of your application.
@@ -13,6 +13,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  DatabaseMethods databaseMethods = new DatabaseMethods();
   @override
   void initState() {
     super.initState();
@@ -24,13 +25,19 @@ class _SplashScreenState extends State<SplashScreen> {
       FirebaseAuth auth = FirebaseAuth.instance;
       var val = auth.currentUser;
       if (val != null) {
-        Navigator.push(
+        await databaseMethods.getCurrentUser().then((val) {
+          Provider.of<UserProvider>(context, listen: false)
+              .updateName(val["name"]);
+
+          Provider.of<UserProvider>(context, listen: false)
+              .updateEmail(val["email"]);
+        });
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => ChatRoom(),
             ));
       } else {
-        print("hi");
         Navigator.of(context).pushReplacementNamed(
           '/signIn',
         );

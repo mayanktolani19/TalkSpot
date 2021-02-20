@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/screens/forgot_password.dart';
 import 'package:talk_spot/screens/signup.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';
+import 'package:talk_spot/widgets/toast.dart';
 import 'package:talk_spot/widgets/widget.dart';
 import 'dart:ui';
 
@@ -26,27 +26,29 @@ class _SignInState extends State<SignIn> {
       new TextEditingController();
   bool isLoading = false;
   QuerySnapshot snapshotUserInfo;
-  signIn() {
+  signIn() async {
     if (formKey.currentState.validate()) {
-      Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(emailTextEditingController.text);
       setState(() {
         isLoading = true;
       });
-      databaseMethods
-          .getUserByUserEmail(emailTextEditingController.text)
-          .then((val) {
-        snapshotUserInfo = val;
-        Provider.of<UserProvider>(context, listen: false)
-            .updateName(snapshotUserInfo.docs[0]["name"]);
-      });
-      authMethods
+      await authMethods
           .signInWithEmailAndPassword(emailTextEditingController.text,
               passwordTextEditingController.text)
-          .then((val) {
+          .then((val) async {
         if (val != null) {
+          await databaseMethods.getCurrentUser().then((val) {
+            Provider.of<UserProvider>(context, listen: false)
+                .updateName(val["name"]);
+            Provider.of<UserProvider>(context, listen: false)
+                .updateEmail(val["email"]);
+          });
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => ChatRoom()));
+        } else {
+          setState(() {
+            showToast('Invalid email or password', Colors.red);
+            isLoading = false;
+          });
         }
       });
     }

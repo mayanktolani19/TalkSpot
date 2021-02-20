@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/screens/signin.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';
+import 'package:talk_spot/widgets/toast.dart';
 import 'package:talk_spot/widgets/widget.dart';
 
 class SignUp extends StatefulWidget {
@@ -31,11 +31,6 @@ class _SignUpState extends State<SignUp> {
         "name": usernameTextEditingController.text,
         "email": emailTextEditingController.text
       };
-
-      Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(emailTextEditingController.text);
-      Provider.of<UserProvider>(context, listen: false)
-          .updateName(usernameTextEditingController.text);
       setState(() {
         isLoading = true;
       });
@@ -43,9 +38,20 @@ class _SignUpState extends State<SignUp> {
           .signUpWithEmailAndPassword(emailTextEditingController.text,
               passwordTextEditingController.text)
           .then((val) {
-        databaseMethods.uploadUserInfo(userMap, false);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => ChatRoom()));
+        if (val) {
+          databaseMethods.uploadUserInfo(userMap, false);
+          Provider.of<UserProvider>(context, listen: false)
+              .updateEmail(emailTextEditingController.text);
+          Provider.of<UserProvider>(context, listen: false)
+              .updateName(usernameTextEditingController.text);
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => ChatRoom()));
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showToast('Account already exists', Colors.red);
+        }
       });
     }
   }

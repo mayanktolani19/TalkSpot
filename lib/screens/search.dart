@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talk_spot/helper/constants.dart';
-import 'package:talk_spot/helper/helperfunctions.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/conversation_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';

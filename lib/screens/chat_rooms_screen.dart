@@ -22,6 +22,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   @override
   void initState() {
+    print("Chat room");
     databaseMethods
         .getChatRooms(Provider.of<UserProvider>(context, listen: false).name)
         .then((val) {

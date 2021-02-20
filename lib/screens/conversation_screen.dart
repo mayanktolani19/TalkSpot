@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talk_spot/helper/constants.dart';
 import 'package:talk_spot/services/database.dart';
 import 'dart:async';
 

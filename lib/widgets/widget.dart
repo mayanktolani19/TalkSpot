@@ -13,6 +13,12 @@ Widget appBarMain(BuildContext context) {
 InputDecoration textFieldInputDecoration(String hintText, Icon icon) {
   return InputDecoration(
     icon: icon,
+    border: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.blue,
+          width: 0.0,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(35))),
     enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
           color: Colors.blue,
@@ -20,6 +26,18 @@ InputDecoration textFieldInputDecoration(String hintText, Icon icon) {
         ),
         borderRadius: BorderRadius.all(Radius.circular(35))),
     focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.blue,
+          width: 0.0,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(35))),
+    errorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.blue,
+          width: 0.0,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(35))),
+    focusedErrorBorder: OutlineInputBorder(
         borderSide: const BorderSide(
           color: Colors.blue,
           width: 0.0,

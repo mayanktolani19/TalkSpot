@@ -3,6 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseMethods {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  getCurrentUser() async {
+    try {
+      return await firestore
+          .collection("users")
+          .doc(auth.currentUser.uid)
+          .get();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   getUserByUsername(String username) async {
     try {
       return await firestore
@@ -40,7 +52,10 @@ class DatabaseMethods {
     if (save) {
       print("save");
 
-      await firestore.collection("users").doc().set(userMap);
+      await firestore
+          .collection("users")
+          .doc(auth.currentUser.uid)
+          .set(userMap);
     }
   }
 
