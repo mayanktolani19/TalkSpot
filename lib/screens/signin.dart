@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:talk_spot/screens/forgot_password.dart';
 import 'package:talk_spot/screens/signup.dart';
@@ -7,7 +9,6 @@ import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';
-import 'package:talk_spot/widgets/toast.dart';
 import 'package:talk_spot/widgets/widget.dart';
 import 'dart:ui';
 
@@ -17,6 +18,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   final formKey = GlobalKey<FormState>();
@@ -36,20 +39,46 @@ class _SignInState extends State<SignIn> {
               passwordTextEditingController.text)
           .then((val) async {
         if (val != null) {
-          await databaseMethods.getCurrentUser().then((val) {
+          await databaseMethods.getCurrentUser().then((val2) {
             Provider.of<UserProvider>(context, listen: false)
-                .updateName(val["name"]);
+                .updateName(val2["name"]);
             Provider.of<UserProvider>(context, listen: false)
-                .updateEmail(val["email"]);
+                .updateEmail(val2["email"]);
+            Provider.of<UserProvider>(context, listen: false)
+                .updateUid(auth.currentUser.uid);
           });
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => ChatRoom()));
         } else {
           setState(() {
-            showToast('Invalid email or password', Colors.red);
             isLoading = false;
           });
         }
+      });
+    }
+  }
+
+  signInWithGoogle() async {
+    setState(() {
+      isLoading = true;
+    });
+    User user = await authMethods.signInWithGoogle();
+    print(user);
+    if (user != null) {
+      Provider.of<UserProvider>(context, listen: false).updateEmail(user.email);
+      Provider.of<UserProvider>(context, listen: false)
+          .updateName(user.displayName);
+      Provider.of<UserProvider>(context, listen: false).updateUid(user.uid);
+      Map<String, dynamic> userMap = {
+        "name": user.displayName,
+        "email": user.email
+      };
+      await databaseMethods.uploadUserInfo(userMap, true, user.uid);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => ChatRoom()));
+    } else {
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -190,28 +219,7 @@ class _SignInState extends State<SignIn> {
                       SizedBox(height: 15),
                       GestureDetector(
                         onTap: () async {
-                          String em = await authMethods.signInWithGoogle();
-                          print(em);
-                          if (em != null) {
-                            Provider.of<UserProvider>(context, listen: false)
-                                .updateEmail(em);
-                            setState(() {
-                              isLoading = true;
-                            });
-                            String name = await authMethods.getUserName();
-                            Provider.of<UserProvider>(context, listen: false)
-                                .updateName(name);
-                            Map<String, dynamic> userMap = {
-                              "name": name,
-                              "email": em
-                            };
-                            await databaseMethods.uploadUserInfo(userMap, true);
-                            if (em != null && name != null)
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ChatRoom()));
-                          }
+                          await signInWithGoogle();
                         },
                         child: Container(
                           alignment: Alignment.center,

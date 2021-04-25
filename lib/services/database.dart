@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:talk_spot/services/auth.dart';
 
 class DatabaseMethods {
+  AuthMethods authMethods = new AuthMethods();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   getCurrentUser() async {
@@ -13,6 +15,10 @@ class DatabaseMethods {
     } catch (e) {
       print(e);
     }
+  }
+
+  getUserByUid(String uid) async {
+    return await firestore.collection("users").doc(uid).get();
   }
 
   getUserByUsername(String username) async {
@@ -38,7 +44,7 @@ class DatabaseMethods {
     }
   }
 
-  uploadUserInfo(userMap, google) async {
+  uploadUserInfo(userMap, google, id) async {
     bool save = true;
     if (google) {
       var a = await firestore.collection("users").get();
@@ -50,12 +56,7 @@ class DatabaseMethods {
       }
     }
     if (save) {
-      print("save");
-
-      await firestore
-          .collection("users")
-          .doc(auth.currentUser.uid)
-          .set(userMap);
+      await firestore.collection("users").doc(id).set(userMap);
     }
   }
 

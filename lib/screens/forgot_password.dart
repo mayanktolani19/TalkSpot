@@ -94,49 +94,51 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               !userFound && tap
                   ? showDialog(
                       context: context,
-                      child: AlertDialog(
-                        backgroundColor: Colors.blue[900],
-                        title: Text(
-                          'Email not found!',
-                          style: simpleTextFieldStyle(),
-                        ),
-                        content: Text(
-                          'Please check your email and try again.',
-                          style: simpleTextFieldStyle(),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                            child: Text('Ok'),
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: Colors.blue[900],
+                          title: Text(
+                            'Email not found!',
+                            style: simpleTextFieldStyle(),
                           ),
-                        ],
-                      ),
-                    )
+                          content: Text(
+                            'Please check your email and try again.',
+                            style: simpleTextFieldStyle(),
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: Text('Ok'),
+                            ),
+                          ],
+                        );
+                      })
                   : tap
                       ? showDialog(
                           context: context,
-                          child: AlertDialog(
-                            backgroundColor: Colors.blue[900],
-                            title: Text(
-                              'Email sent successfully!',
-                              style: simpleTextFieldStyle(),
-                            ),
-                            content: Text(
-                              'Login to your mail and follow the link to reset password',
-                              style: simpleTextFieldStyle(),
-                            ),
-                            actions: <Widget>[
-                              FlatButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                                child: Text('Ok'),
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.blue[900],
+                              title: Text(
+                                'Email sent successfully!',
+                                style: simpleTextFieldStyle(),
                               ),
-                            ],
-                          ),
-                        )
+                              content: Text(
+                                'Login to your mail and follow the link to reset password',
+                                style: simpleTextFieldStyle(),
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            );
+                          })
                       : Container();
             },
             child: Container(

@@ -1,18 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:talk_spot/modal/user.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:talk_spot/widgets/toast.dart';
 
 class AuthMethods {
   GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  signInWithGoogle() async {
+  Future<User> signInWithGoogle() async {
     try {
-      await googleSignIn.signIn();
-      return googleSignIn.currentUser.email;
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
+      User user = (await _auth.signInWithCredential(credential)).user;
+      return user;
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   getUserName() async {
@@ -24,21 +34,44 @@ class AuthMethods {
   }
 
   Future signInWithEmailAndPassword(String email, String password) async {
+    String errorMessage;
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
-    } catch (e) {
-      print(e);
+      var result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      User user = result.user;
+      return user;
+    } catch (error) {
+      print(error.code);
+      switch (error.code) {
+        case "invalid-email":
+          errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "wrong-password":
+          errorMessage = "Your password is wrong.";
+          break;
+        case "user-not-found":
+          errorMessage = "User with this email doesn't exist.";
+          break;
+      }
+      showToast(errorMessage, Colors.red);
     }
   }
 
   Future signUpWithEmailAndPassword(String email, String password) async {
+    String errorMessage;
     try {
-      await _auth.createUserWithEmailAndPassword(
+      var result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      User user = result.user;
       return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') print(e);
+    } catch (error) {
+      print(error.code);
+      switch (error.code) {
+        case "email-already-in-use":
+          errorMessage = "Email address is already in use.";
+          break;
+      }
+      showToast(errorMessage, Colors.red);
       return false;
     }
   }

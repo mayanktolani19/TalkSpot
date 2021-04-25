@@ -101,34 +101,35 @@ class _ChatRoomState extends State<ChatRoom> {
             GestureDetector(
               onTap: () {
                 showDialog(
-                  context: context,
-                  child: AlertDialog(
-                    backgroundColor: Colors.blue[900],
-                    title: Text(
-                      'Are you sure you want to logout?',
-                      style: simpleTextFieldStyle(),
-                    ),
-                    content: Text(
-                      'We hate to see you leave...',
-                      style: simpleTextFieldStyle(),
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                        child: Text('No'),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          logoutUser();
-                        },
-                        child: Text('Yes'),
-                      ),
-                    ],
-                  ),
-                );
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.blue[900],
+                        title: Text(
+                          'Are you sure you want to logout?',
+                          style: simpleTextFieldStyle(),
+                        ),
+                        content: Text(
+                          'We hate to see you leave...',
+                          style: simpleTextFieldStyle(),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                            child: Text('No'),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              logoutUser();
+                            },
+                            child: Text('Yes'),
+                          ),
+                        ],
+                      );
+                    });
               },
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 16),

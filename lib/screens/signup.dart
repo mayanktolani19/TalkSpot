@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:talk_spot/screens/signin.dart';
@@ -5,7 +6,6 @@ import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';
-import 'package:talk_spot/widgets/toast.dart';
 import 'package:talk_spot/widgets/widget.dart';
 
 class SignUp extends StatefulWidget {
@@ -15,6 +15,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   AuthMethods authMethods = new AuthMethods();
+  FirebaseAuth auth = FirebaseAuth.instance;
   DatabaseMethods databaseMethods = new DatabaseMethods();
   bool isLoading = false;
   final formKey = GlobalKey<FormState>();
@@ -37,20 +38,22 @@ class _SignUpState extends State<SignUp> {
       authMethods
           .signUpWithEmailAndPassword(emailTextEditingController.text,
               passwordTextEditingController.text)
-          .then((val) {
+          .then((val) async {
         if (val) {
-          databaseMethods.uploadUserInfo(userMap, false);
+          await databaseMethods.uploadUserInfo(
+              userMap, false, auth.currentUser.uid);
           Provider.of<UserProvider>(context, listen: false)
               .updateEmail(emailTextEditingController.text);
           Provider.of<UserProvider>(context, listen: false)
               .updateName(usernameTextEditingController.text);
+          Provider.of<UserProvider>(context, listen: false)
+              .updateUid(auth.currentUser.uid);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => ChatRoom()));
         } else {
           setState(() {
             isLoading = false;
           });
-          showToast('Account already exists', Colors.red);
         }
       });
     }

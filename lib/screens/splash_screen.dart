@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/database.dart';
@@ -24,13 +25,17 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(milliseconds: 1000), () async {
       FirebaseAuth auth = FirebaseAuth.instance;
       var val = auth.currentUser;
+      GoogleSignIn googleSignIn = GoogleSignIn();
+      bool google = await googleSignIn.isSignedIn();
+      print(google);
       if (val != null) {
-        await databaseMethods.getCurrentUser().then((val) {
+        await databaseMethods.getUserByUid(auth.currentUser.uid).then((val) {
           Provider.of<UserProvider>(context, listen: false)
               .updateName(val["name"]);
-
           Provider.of<UserProvider>(context, listen: false)
               .updateEmail(val["email"]);
+          Provider.of<UserProvider>(context, listen: false)
+              .updateUid(auth.currentUser.uid);
         });
         Navigator.pushReplacement(
             context,

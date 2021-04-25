@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
-  String name, email;
+  String name, email, uid;
   updateName(String newName) {
     name = newName;
     notifyListeners();
@@ -9,6 +9,11 @@ class UserProvider extends ChangeNotifier {
 
   updateEmail(String newEmail) {
     email = newEmail;
+    notifyListeners();
+  }
+
+  updateUid(String newUid) {
+    uid = newUid;
     notifyListeners();
   }
 }

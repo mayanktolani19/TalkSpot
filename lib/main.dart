@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talk_spot/screens/signin.dart';
 import 'package:talk_spot/screens/splash_screen.dart';
 import 'package:talk_spot/services/routing.dart';
 import 'package:talk_spot/services/user_provider.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
           home: SplashScreen(),
           initialRoute: '/',
           onGenerateRoute: RouteGenerator.generateRoute,
-          // home: isLoggedIn ? ChatRoom() : Authenticate(),
         ),
       ),
     );
