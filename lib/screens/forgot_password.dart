@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
+import 'package:talk_spot/widgets/colors.dart';
 import 'package:talk_spot/widgets/widget.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -46,13 +47,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           'TalkSpot',
           style: TextStyle(fontSize: 22),
         ),
-        backgroundColor: Color.fromRGBO(13, 35, 197, 80),
       ),
       body: Container(
           child: Column(
@@ -65,7 +64,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               'Forgot your Password?',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
                 fontSize: 32,
               ),
             ),
@@ -88,49 +86,28 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () async {
-              await forgotPassword();
-              !userFound && tap
-                  ? showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.blue[900],
-                          title: Text(
-                            'Email not found!',
-                            style: simpleTextFieldStyle(),
-                          ),
-                          content: Text(
-                            'Please check your email and try again.',
-                            style: simpleTextFieldStyle(),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              },
-                              child: Text('Ok'),
-                            ),
-                          ],
-                        );
-                      })
-                  : tap
+          Container(
+            margin: EdgeInsets.only(top: 35, left: 14, right: 14),
+            width: MediaQuery.of(context).size.width,
+            child: ElevatedButton(
+                onPressed: () async {
+                  await forgotPassword();
+                  !userFound && tap
                       ? showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              backgroundColor: Colors.blue[900],
+                              backgroundColor: mainColor,
                               title: Text(
-                                'Email sent successfully!',
+                                'Email not found!',
                                 style: simpleTextFieldStyle(),
                               ),
                               content: Text(
-                                'Login to your mail and follow the link to reset password',
+                                'Please check your email and try again.',
                                 style: simpleTextFieldStyle(),
                               ),
                               actions: <Widget>[
-                                FlatButton(
+                                MaterialButton(
                                   onPressed: () {
                                     Navigator.of(context).pop(false);
                                   },
@@ -139,27 +116,42 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               ],
                             );
                           })
-                      : Container();
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 14, vertical: 40),
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                "Send Password Reset Email",
-                style: TextStyle(fontSize: 17, color: Colors.white),
-              ),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color.fromRGBO(13, 15, 157, 90),
-                        Color.fromRGBO(13, 35, 197, 80),
-                      ])),
-            ),
+                      : tap
+                          ? showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: mainColor,
+                                  title: Text(
+                                    'Email sent successfully!',
+                                    style: simpleTextFieldStyle(),
+                                  ),
+                                  content: Text(
+                                    'Login to your mail and follow the link to reset password',
+                                    style: simpleTextFieldStyle(),
+                                  ),
+                                  actions: <Widget>[
+                                    MaterialButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                      child: Text('Ok'),
+                                    ),
+                                  ],
+                                );
+                              })
+                          : Container();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    "Send Password Reset Email",
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ),
+                style: buttonStyle),
           ),
         ],
       )),

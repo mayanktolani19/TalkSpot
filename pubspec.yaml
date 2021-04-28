@@ -30,6 +30,9 @@ dependencies:
   provider: ^5.0.0
   fluttertoast: ^7.1.6
   flutter_keyboard_visibility: ^5.0.1
+  slide_drawer: ^1.0.1
+  stacked_themes: ^0.3.2
+  lite_rolling_switch: ^0.1.1
 
 dev_dependencies:
   flutter_test:

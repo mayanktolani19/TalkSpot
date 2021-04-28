@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stacked_themes/stacked_themes.dart';
 import 'package:talk_spot/screens/splash_screen.dart';
 import 'package:talk_spot/services/routing.dart';
 import 'package:talk_spot/services/user_provider.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ThemeManager.initialise();
   await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -21,16 +23,30 @@ class MyApp extends StatelessWidget {
             create: (context) => UserProvider()),
       ],
       child: KeyboardDismissOnTap(
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primaryColor: Color(0xff145C9E),
-            scaffoldBackgroundColor: Color(0xff1F1F1F),
-            primarySwatch: Colors.blue,
+        child: Center(
+          child: ThemeBuilder(
+            defaultThemeMode: ThemeMode.light,
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              accentColor: Color(0xffFF6B51),
+              buttonColor: Color(0xffFF6B51),
+              appBarTheme: AppBarTheme(color: Color(0xffFF6B51)),
+            ),
+            lightTheme: ThemeData(
+              brightness: Brightness.light,
+              appBarTheme: AppBarTheme(color: Color(0xffFF6B51)),
+              buttonColor: Color(0xffFF6B51),
+              accentColor: Color(0xffFF6B51),
+            ),
+            builder: (context, lightTheme, darkTheme, themeMode) => MaterialApp(
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeMode,
+              home: SplashScreen(),
+              initialRoute: '/',
+              onGenerateRoute: RouteGenerator.generateRoute,
+            ),
           ),
-          home: SplashScreen(),
-          initialRoute: '/',
-          onGenerateRoute: RouteGenerator.generateRoute,
         ),
       ),
     );

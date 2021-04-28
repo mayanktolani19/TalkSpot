@@ -52,6 +52,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text('hi'));
+    return Scaffold(
+        body: Container(
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/splash-icon.png',
+            height: 80,
+            width: 80,
+          ),
+          Text(
+            'TalkSpot',
+            style: TextStyle(color: Color(0xffFF6B51), fontSize: 32),
+          )
+        ],
+      ),
+    ));
   }
 }

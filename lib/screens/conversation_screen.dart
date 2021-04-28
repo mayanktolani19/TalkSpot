@@ -4,6 +4,7 @@ import 'package:talk_spot/services/database.dart';
 import 'dart:async';
 
 import 'package:talk_spot/services/user_provider.dart';
+import 'package:talk_spot/widgets/colors.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -71,13 +72,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           widget.userName,
           style: TextStyle(fontSize: 22),
         ),
-        backgroundColor: Color.fromRGBO(13, 35, 197, 80),
       ),
       body: Container(
         child: Stack(
@@ -86,23 +85,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Container(
               alignment: Alignment.bottomCenter,
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(40),
-                    color: Colors.black12),
-                //color: Color(0x54FFFFFF),
-                //margin: EdgeInsets.symmetric(vertical: 8),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    color: Colors.grey),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 child: Row(
                   children: <Widget>[
                     Expanded(
                         child: Container(
                       child: TextField(
                         controller: messageTextController,
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style: TextStyle(fontSize: 16),
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: "Type a message....",
-                            hintStyle: TextStyle(color: Colors.white54)),
+                            hintStyle: TextStyle(color: Colors.white)),
                       ),
                     )),
                     GestureDetector(
@@ -113,10 +111,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(40),
-                              color: Colors.blueGrey),
+                              color: mainColor),
                           child: Icon(
                             Icons.send,
                             size: 25,
+                            color: Colors.white,
                           )),
                     )
                   ],
@@ -153,20 +152,17 @@ class MessageTile extends StatelessWidget {
               : EdgeInsets.all(0),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           decoration: BoxDecoration(
-              borderRadius: isSendByMe
-                  ? BorderRadius.only(
-                      topLeft: Radius.circular(23),
-                      topRight: Radius.circular(23),
-                      bottomLeft: Radius.circular(23))
-                  : BorderRadius.only(
-                      topLeft: Radius.circular(23),
-                      topRight: Radius.circular(23),
-                      bottomRight: Radius.circular(23)),
-              gradient: LinearGradient(
-                colors: isSendByMe
-                    ? [const Color(0xff007EF4), const Color(0xff2A75BC)]
-                    : [const Color(0x1AFFFFFF), const Color(0x1AFFFFFF)],
-              )),
+            borderRadius: isSendByMe
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(23),
+                    topRight: Radius.circular(23),
+                    bottomLeft: Radius.circular(23))
+                : BorderRadius.only(
+                    topLeft: Radius.circular(23),
+                    topRight: Radius.circular(23),
+                    bottomRight: Radius.circular(23)),
+            color: isSendByMe ? mainColor : Colors.grey,
+          ),
           child: Text(
             message,
             style: TextStyle(fontSize: 17, color: Colors.white),

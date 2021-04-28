@@ -9,6 +9,7 @@ import 'package:talk_spot/services/auth.dart';
 import 'package:talk_spot/services/database.dart';
 import 'package:talk_spot/screens/chat_rooms_screen.dart';
 import 'package:talk_spot/services/user_provider.dart';
+import 'package:talk_spot/widgets/colors.dart';
 import 'package:talk_spot/widgets/widget.dart';
 import 'dart:ui';
 
@@ -86,23 +87,8 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-          backgroundColor: Color.fromRGBO(13, 35, 197, 80),
-          title: Text(
-            'TalkSpot',
-            style: TextStyle(fontSize: 22),
-          )),
       body: !isLoading
           ? Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Color.fromRGBO(0, 0, 10, 10),
-                    Color.fromRGBO(13, 35, 97, 80),
-                  ])),
               child: Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(horizontal: 24),
@@ -115,15 +101,15 @@ class _SignInState extends State<SignIn> {
                         'SignIn To TalkSpot!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white,
                           fontSize: 32,
                         ),
                       ),
                       SizedBox(height: 15),
                       Container(
                         child: Image.asset(
-                          'assets/images/icons1.png',
-                          color: Colors.white,
+                          'assets/images/splash-icon.png',
+                          height: 64,
+                          width: 64,
                         ),
                       ),
                       SizedBox(height: 30),
@@ -144,8 +130,11 @@ class _SignInState extends State<SignIn> {
                                 },
                                 style: simpleTextFieldStyle(),
                                 controller: emailTextEditingController,
-                                decoration: textFieldInputDecoration('Email',
-                                    Icon(Icons.email, color: Colors.white)),
+                                decoration: textFieldInputDecoration(
+                                    'Email',
+                                    Icon(
+                                      Icons.email,
+                                    )),
                               ),
                             ),
                             SizedBox(height: 15),
@@ -162,8 +151,9 @@ class _SignInState extends State<SignIn> {
                               style: simpleTextFieldStyle(),
                               decoration: textFieldInputDecoration(
                                   'Password',
-                                  Icon(Icons.lock_outline,
-                                      color: Colors.white)),
+                                  Icon(
+                                    Icons.lock_outline,
+                                  )),
                             ),
                           ],
                         ),
@@ -186,53 +176,46 @@ class _SignInState extends State<SignIn> {
                               "Forgot Password?",
                               style: TextStyle(
                                   decoration: TextDecoration.underline,
-                                  color: Colors.white,
                                   fontSize: 16),
                             ),
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () {
-                          signIn();
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            "Sign In",
-                            style: TextStyle(fontSize: 17, color: Colors.white),
-                          ),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Color.fromRGBO(13, 15, 157, 90),
-                                    Color.fromRGBO(13, 35, 197, 80),
-                                  ])),
-                        ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              await signIn();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                "Sign In",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                            style: buttonStyle),
                       ),
                       SizedBox(height: 15),
-                      GestureDetector(
-                        onTap: () async {
-                          await signInWithGoogle();
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            "Sign In with Google",
-                            style: TextStyle(fontSize: 17, color: Colors.black),
-                          ),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.white),
-                        ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              await signInWithGoogle();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                "Sign In with Google",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                            style: buttonStyle),
                       ),
                       SizedBox(height: 16),
                       Row(
@@ -240,14 +223,14 @@ class _SignInState extends State<SignIn> {
                         children: <Widget>[
                           Text(
                             "Don't have an account? ",
-                            style: TextStyle(fontSize: 17, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUp()));
+                              Navigator.pushReplacementNamed(
+                                  context, '/signUp');
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8),
@@ -255,7 +238,6 @@ class _SignInState extends State<SignIn> {
                                 "Register Now",
                                 style: TextStyle(
                                     fontSize: 17,
-                                    color: Colors.white,
                                     decoration: TextDecoration.underline),
                               ),
                             ),

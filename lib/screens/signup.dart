@@ -62,19 +62,10 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarMain(context),
       body: isLoading
           ? Container(child: Center(child: CircularProgressIndicator()))
           : Container(
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Color.fromRGBO(0, 0, 10, 10),
-                    Color.fromRGBO(13, 35, 97, 80),
-                  ])),
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: SingleChildScrollView(
                 child: Column(
@@ -85,16 +76,13 @@ class _SignUpState extends State<SignUp> {
                       'Register on TalkSpot!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
                         fontSize: 32,
                       ),
                     ),
                     SizedBox(height: 15),
                     Container(
-                      child: Image.asset(
-                        'assets/images/icons1.png',
-                        color: Colors.white,
-                      ),
+                      child: Image.asset('assets/images/splash-icon.png',
+                          height: 64, width: 64),
                     ),
                     SizedBox(height: 30),
                     Form(
@@ -110,7 +98,6 @@ class _SignUpState extends State<SignUp> {
                                   'User Name',
                                   Icon(
                                     Icons.supervised_user_circle,
-                                    color: Colors.white,
                                   )),
                               validator: (val) {
                                 return val.isEmpty
@@ -126,8 +113,11 @@ class _SignUpState extends State<SignUp> {
                             child: TextFormField(
                               controller: emailTextEditingController,
                               style: simpleTextFieldStyle(),
-                              decoration: textFieldInputDecoration('Email',
-                                  Icon(Icons.email, color: Colors.white)),
+                              decoration: textFieldInputDecoration(
+                                  'Email',
+                                  Icon(
+                                    Icons.email,
+                                  )),
                               validator: (val) {
                                 return RegExp(
                                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -145,8 +135,9 @@ class _SignUpState extends State<SignUp> {
                               style: simpleTextFieldStyle(),
                               decoration: textFieldInputDecoration(
                                   'Password',
-                                  Icon(Icons.lock_outline,
-                                      color: Colors.white)),
+                                  Icon(
+                                    Icons.lock_outline,
+                                  )),
                               validator: (val) {
                                 return val.isEmpty
                                     ? "Please provide a Password."
@@ -159,30 +150,23 @@ class _SignUpState extends State<SignUp> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 15),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        signMeUp();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(fontSize: 17, color: Colors.white),
-                        ),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Color.fromRGBO(13, 15, 157, 90),
-                                  Color.fromRGBO(13, 35, 197, 80),
-                                ])),
-                      ),
+                    SizedBox(height: 25),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            await signMeUp();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
+                            ),
+                          ),
+                          style: buttonStyle),
                     ),
                     SizedBox(height: 16),
                     Row(
@@ -190,14 +174,13 @@ class _SignUpState extends State<SignUp> {
                       children: <Widget>[
                         Text(
                           "Already have an account? ",
-                          style: TextStyle(fontSize: 17, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignIn()));
+                            Navigator.pushReplacementNamed(context, '/signIn');
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 8),
@@ -205,7 +188,6 @@ class _SignUpState extends State<SignUp> {
                               "SignIn Now",
                               style: TextStyle(
                                   fontSize: 17,
-                                  color: Colors.white,
                                   decoration: TextDecoration.underline),
                             ),
                           ),
